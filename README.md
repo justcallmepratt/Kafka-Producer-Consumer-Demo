@@ -395,6 +395,17 @@ curl -X POST http://localhost:8080/api/kafka/produce \
 - On Windows: Use `.env.dev` contents to set variables manually
 - Or use Spring profile: `SPRING_PROFILES_ACTIVE=dev ./mvnw spring-boot:run`
 
+## 📚 Documentation
+
+Detailed documentation is available in the [`docs/`](docs/) directory:
+
+- **[Documentation Index](docs/DOCUMENTATION-INDEX.md)** - Complete documentation navigator
+- **[Module Architecture](docs/MODULAR-ARCHITECTURE.md)** - Multi-module structure guide
+- **[12-Factor Compliance](docs/12-FACTOR-COMPLIANCE.md)** - Cloud-native best practices
+- **[Micro Frontend](docs/MICRO-FRONTEND.md)** - Frontend architecture guide
+- **[Angular Migration](docs/ANGULAR_MIGRATION.md)** - Angular setup and migration
+- **[Refactoring Summary](docs/REFACTORING-SUMMARY.md)** - Detailed refactoring changelog
+
 ## 📚 Technologies Used
 
 ### Architecture

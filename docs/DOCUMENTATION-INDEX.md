@@ -5,8 +5,8 @@ Complete documentation for the Kafka Messaging Platform - a modular, 12-Factor c
 ## 🎯 Quick Links
 
 ### Getting Started
-- **[README.md](README.md)** - Main documentation, quick start guide, API reference
-- **[MODULE-STRUCTURE.txt](MODULE-STRUCTURE.txt)** - Visual module architecture diagram
+- **[README.md](../README.md)** - Main documentation, quick start guide, API reference
+- Visual module architecture (see MODULAR-ARCHITECTURE.md)
 
 ### Architecture Documentation
 - **[MODULAR-ARCHITECTURE.md](MODULAR-ARCHITECTURE.md)** - Multi-module Maven architecture guide

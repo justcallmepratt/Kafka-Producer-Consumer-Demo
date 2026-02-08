@@ -367,7 +367,7 @@ COPY --from=build /app/demo-app/target/demo-app-0.0.1-SNAPSHOT.jar app.jar
 - **12-Factor Compliance**: See [12-FACTOR-COMPLIANCE.md](12-FACTOR-COMPLIANCE.md)
 - **Angular Migration**: See [ANGULAR_MIGRATION.md](ANGULAR_MIGRATION.md)
 - **Micro Frontend**: See [MICRO-FRONTEND.md](MICRO-FRONTEND.md)
-- **Original README**: See [README.md](README.md)
+- **Main README**: See [README.md](../README.md)
 
 ---
 

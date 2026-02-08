@@ -388,6 +388,6 @@ Check console for errors. Ensure:
 ## References
 
 - [Micro Frontends Pattern](https://martinfowler.com/articles/micro-frontends.html)
-- [12-Factor App Principles](../12-FACTOR-COMPLIANCE.md)
-- [Angular Migration Guide](../ANGULAR_MIGRATION.md)
+- [12-Factor App Principles](12-FACTOR-COMPLIANCE.md)
+- [Angular Migration Guide](ANGULAR_MIGRATION.md)
 - [API Documentation](../README.md#api-endpoints)

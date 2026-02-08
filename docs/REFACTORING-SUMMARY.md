@@ -260,7 +260,7 @@ demo-app
 
 ## 📚 Reference Documentation
 
-- **Main Documentation**: [README.md](README.md)
+- **Main Documentation**: [README.md](../README.md)
 - **Module Architecture**: [MODULAR-ARCHITECTURE.md](MODULAR-ARCHITECTURE.md)
 - **12-Factor Compliance**: [12-FACTOR-COMPLIANCE.md](12-FACTOR-COMPLIANCE.md)
 - **Micro Frontend**: [MICRO-FRONTEND.md](MICRO-FRONTEND.md)
