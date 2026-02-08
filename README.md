@@ -397,6 +397,12 @@ curl -X POST http://localhost:8080/api/kafka/produce \
 
 ## 📚 Technologies Used
 
+### Architecture
+- **Maven Multi-Module** - Modular project structure (4 modules)
+- **12-Factor App** - Cloud-native best practices
+- **Micro Frontend** - Independent, composable UI modules
+
+### Backend
 - **Spring Boot 4.0.2** - Application framework
 - **Spring Kafka** - Kafka integration
 - **Spring Data MongoDB** - MongoDB persistence
