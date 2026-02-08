@@ -1,8 +1,22 @@
 # Kafka Producer & Consumer Demo
 
-A **12-Factor compliant** Spring Boot application demonstrating Kafka producer and consumer functionality with MongoDB persistence and a modern web UI.
+A **12-Factor compliant**, **modular** Spring Boot application demonstrating Kafka producer and consumer functionality with MongoDB persistence and a modern micro frontend UI.
 
-## 🏗️ 12-Factor App Principles
+## 🏗️ Architecture
+
+This application uses a **Maven multi-module architecture** for clean separation of concerns:
+
+```
+demo-parent/
+├── demo-common/          # Domain models and repositories
+├── demo-kafka/           # Kafka configuration and services  
+├── demo-api/             # REST controllers and web config
+└── demo-app/             # Main executable application
+```
+
+📖 **See [MODULAR-ARCHITECTURE.md](MODULAR-ARCHITECTURE.md) for detailed module documentation**
+
+## 🎯 12-Factor App Principles
 
 This application follows the [12-Factor App](https://12factor.net/) methodology:
 
@@ -72,31 +86,48 @@ KAFKA_BOOTSTRAP_SERVERS=localhost:9092
 
 Using Docker Compose:
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-### 3. Load Environment & Run
+### 3. Build Multi-Module Project
 
-**Option A: Using the startup script (Recommended)**
+**Build all modules:**
 ```bash
-chmod +x start.sh
-./start.sh
+./mvnw clean install
 ```
 
-**Option B: Manual setup**
+**Or skip tests:**
 ```bash
-# Load environment variables
-export $(cat .env.dev | grep -v '^#' | xargs)
+./mvnw clean install -DskipTests
+```
 
-# Build and run
-./mvnw clean package
+This will build all 4 modules in order:
+1. demo-common (models & repositories)
+2. demo-kafka (Kafka services)
+3. demo-api (REST controllers)
+4. demo-app (main application)
+
+### 4. Run the Application
+
+**Option A: Using Maven (Development)**
+```bash
+cd demo-app
 ./mvnw spring-boot:run
 ```
 
-**Option C: Using Docker**
+**Option B: Using JAR (Production)**
 ```bash
-docker build -t kafka-demo .
-docker run -p 8080:8080 --env-file .env.dev kafka-demo
+# Load environment
+export $(cat .env.dev | grep -v '^#' | xargs)
+
+# Run executable JAR
+java -jar demo-app/target/demo-app-0.0.1-SNAPSHOT.jar
+```
+
+**Option C: Using Startup Script**
+```bash
+chmod +x start-modular.sh
+./start-modular.sh
 ```
 
 ### 4. Access the Application
