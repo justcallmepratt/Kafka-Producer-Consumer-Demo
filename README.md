@@ -112,25 +112,27 @@ This will build all 4 modules in order:
 **Option A: Using Maven (Development)**
 ```bash
 cd demo-app
-./mvnw spring-boot:run
+../mvnw spring-boot:run
 ```
 
 **Option B: Using JAR (Production)**
 ```bash
-# Load environment
+# Load environment variables
 export $(cat .env.dev | grep -v '^#' | xargs)
 
 # Run executable JAR
 java -jar demo-app/target/demo-app-0.0.1-SNAPSHOT.jar
 ```
 
-**Option C: Using Startup Script**
+**Option C: All-in-One Commands**
 ```bash
-chmod +x start-modular.sh
-./start-modular.sh
+# Quick start (assuming Kafka is running)
+export $(cat .env.dev | grep -v '^#' | xargs) && \
+./mvnw clean install -DskipTests && \
+java -jar demo-app/target/demo-app-0.0.1-SNAPSHOT.jar
 ```
 
-### 4. Access the Application
+### 5. Access the Application
 
 - **Web UI:** http://localhost:8080
 - **API Base:** http://localhost:8080/api/kafka
