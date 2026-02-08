@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka Messaging Platform - Micro Frontend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/resume-theme.css">
+</head>
+<body>
+    <!-- Header - Resume Style -->
+    <header class="resume-header">
+        <div class="header-content">
+            <div class="profile-section">
+                <div class="avatar">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                </div>
+                <div class="profile-info">
+                    <h1 class="name">Kafka Messaging Platform</h1>
+                    <p class="title">Real-time Event Streaming Dashboard</p>
+                </div>
+            </div>
+            <div class="contact-section">
+                <div class="contact-item">
+                    <span class="icon">🌐</span>
+                    <span>localhost:8080</span>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">📊</span>
+                    <span id="messageCount">0 Messages</span>
+                </div>
+                <div class="contact-item">
+                    <span class="icon">✅</span>
+                    <span class="status-indicator" id="kafkaStatus">Connected</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content - Resume Sections Layout -->
+    <main class="resume-body">
+        <div class="container">
+            <!-- Left Column - Producer & Analytics -->
+            <aside class="left-column">
+                <!-- Producer Module -->
+                <section class="resume-section" id="producer-module">
+                    <div class="section-header">
+                        <div class="section-icon">📤</div>
+                        <h2 class="section-title">Message Producer</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="skill-item">
+                            <label class="skill-label">Topic</label>
+                            <div class="skill-value">
+                                <span class="badge">demo-topic</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group-resume">
+                            <label for="messageKey">Message Key</label>
+                            <input type="text" id="messageKey" class="resume-input" placeholder="Optional partition key">
+                        </div>
+
+                        <div class="form-group-resume">
+                            <label for="messageContent">Message Content</label>
+                            <textarea id="messageContent" class="resume-textarea" rows="4" placeholder="Enter your message here..."></textarea>
+                        </div>
+
+                        <div class="button-group-resume">
+                            <button class="btn-primary-resume" onclick="sendMessage()">
+                                <span class="btn-icon">📨</span>
+                                Send Message
+                            </button>
+                            <button class="btn-secondary-resume" onclick="clearProducer()">
+                                <span class="btn-icon">🔄</span>
+                                Clear
+                            </button>
+                        </div>
+
+                        <div id="producerStatus" class="status-message"></div>
+                    </div>
+                </section>
+
+                <!-- Analytics Module -->
+                <section class="resume-section" id="analytics-module">
+                    <div class="section-header">
+                        <div class="section-icon">📊</div>
+                        <h2 class="section-title">Analytics</h2>
+                    </div>
+                    <div class="section-content">
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value" id="totalMessages">0</div>
+                                <div class="stat-label">Total Messages</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="messagesPerMinute">0</div>
+                                <div class="stat-label">Messages/Min</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="avgLatency">0ms</div>
+                                <div class="stat-label">Avg Latency</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="successRate">100%</div>
+                                <div class="stat-label">Success Rate</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Right Column - Consumer -->
+            <main class="right-column">
+                <!-- Consumer Module -->
+                <section class="resume-section" id="consumer-module">
+                    <div class="section-header">
+                        <div class="section-icon">📥</div>
+                        <h2 class="section-title">Message Consumer</h2>
+                        <div class="section-actions">
+                            <button class="btn-icon-resume" onclick="refreshMessages()" title="Refresh">
+                                🔄
+                            </button>
+                            <button class="btn-icon-resume" onclick="clearAllMessages()" title="Clear All">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    <div class="section-content">
+                        <div class="experience-timeline" id="messageTimeline">
+                            <!-- Messages will be displayed here -->
+                            <div class="empty-state">
+                                <div class="empty-icon">📭</div>
+                                <p>No messages consumed yet</p>
+                                <small>Send a message from the Producer to get started</small>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </main>
+
+    <!-- Footer - Resume Style -->
+    <footer class="resume-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <strong>Technologies:</strong>
+                <span class="tech-badge">Spring Boot</span>
+                <span class="tech-badge">Apache Kafka</span>
+                <span class="tech-badge">MongoDB</span>
+                <span class="tech-badge">Micro Frontends</span>
+            </div>
+            <div class="footer-section">
+                <strong>Architecture:</strong>
+                <span class="tech-badge">12-Factor App</span>
+                <span class="tech-badge">Event-Driven</span>
+                <span class="tech-badge">Cloud-Native</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Load Micro Frontend Modules -->
+    <script src="js/core/api-client.js"></script>
+    <script src="js/modules/producer.js"></script>
+    <script src="js/modules/consumer.js"></script>
+    <script src="js/modules/analytics.js"></script>
+    <script src="js/shell.js"></script>
+</body>
+</html>
