@@ -295,7 +295,7 @@ Attach a volume mounted at `/var/lib/kafka/data` and set these variables:
 | `KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR` | `1` |
 | `KAFKA_TRANSACTION_STATE_LOG_MIN_ISR` | `1` |
 | `KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS` | `0` |
-| `KAFKA_LOG_DIRS` | `/var/lib/kafka/data` |
+| `KAFKA_LOG_DIRS` | `/var/lib/kafka/data/logs` (a subfolder: the volume root holds `lost+found`, which Kafka rejects) |
 | `KAFKA_LOG_RETENTION_HOURS` | `24` |
 | `KAFKA_LOG_RETENTION_BYTES` | `104857600` |
 | `KAFKA_HEAP_OPTS` | `-Xms256m -Xmx256m` |
