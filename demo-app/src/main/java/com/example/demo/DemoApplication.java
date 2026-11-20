@@ -2,7 +2,6 @@ package com.example.demo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * Main application class for the Kafka Messaging Platform.
@@ -18,7 +17,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 	"com.example.demo.kafka",
 	"com.example.demo.api"
 })
-@EnableMongoRepositories(basePackages = "com.example.demo.common.repository")
 public class DemoApplication {
 
 	public static void main(String[] args) {

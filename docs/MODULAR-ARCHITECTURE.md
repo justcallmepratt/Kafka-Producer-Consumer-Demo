@@ -18,11 +18,11 @@ demo-parent/
 **Purpose**: Domain models and data access layer
 
 **Contains**:
-- `Message.java` - MongoDB document model
-- `MessageRepository.java` - Spring Data MongoDB repository
+- `Message.java` - JPA entity
+- `MessageRepository.java` - Spring Data JPA repository
 
 **Dependencies**:
-- `spring-boot-starter-data-mongodb`
+- `spring-boot-starter-data-jpa`
 - `spring-boot-starter`
 
 **Package**: `com.example.demo.common.*`
@@ -41,7 +41,7 @@ demo-parent/
 **Dependencies**:
 - `demo-common` (internal)
 - `spring-kafka`
-- `spring-boot-starter-data-mongodb`
+- `spring-boot-starter-data-jpa`
 
 **Package**: `com.example.demo.kafka.*`
 
@@ -96,7 +96,6 @@ demo-parent/
     "com.example.demo.kafka",
     "com.example.demo.api"
 })
-@EnableMongoRepositories(basePackages = "com.example.demo.common.repository")
 ```
 
 ---

@@ -1,5 +1,7 @@
 # 12-Factor App Compliance Report
 
+> **Note:** written when the app stored messages in MongoDB. It now uses PostgreSQL through Spring Data JPA (`SPRING_DATASOURCE_*` instead of `MONGODB_URI`); see the main README.
+
 ## ✅ How This Application Implements 12-Factor Principles
 
 ### 1. Codebase ✅

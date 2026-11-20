@@ -18,7 +18,7 @@ import com.example.demo.kafka.service.KafkaProducerService;
 
 /**
  * REST controller for Kafka producer and consumer operations.
- * Provides endpoints for the web UI to interact with Kafka and MongoDB.
+ * Provides endpoints for the web UI to interact with Kafka and the database.
  */
 @RestController
 @RequestMapping("/api/kafka")
@@ -82,7 +82,7 @@ public class KafkaController {
     }
 
     /**
-     * Endpoint to clear all consumed messages from MongoDB.
+     * Endpoint to clear all consumed messages from the database.
      *
      * @return Response with success status
      */
@@ -90,7 +90,7 @@ public class KafkaController {
     public ResponseEntity<Map<String, String>> clearMessages() {
         consumerService.clearMessages();
         Map<String, String> response = new HashMap<>();
-        response.put("status", "Messages cleared successfully from MongoDB");
+        response.put("status", "Messages cleared successfully from the database");
         return ResponseEntity.ok(response);
     }
 }

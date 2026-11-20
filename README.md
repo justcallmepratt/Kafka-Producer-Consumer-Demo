@@ -1,6 +1,6 @@
 # Kafka Producer & Consumer Demo
 
-A **12-Factor compliant**, **modular** Spring Boot application demonstrating Kafka producer and consumer functionality with MongoDB persistence and a modern micro frontend UI.
+A **12-Factor compliant**, **modular** Spring Boot application demonstrating Kafka producer and consumer functionality with PostgreSQL persistence and a modern micro frontend UI.
 
 ## 🏗️ Architecture
 
@@ -23,7 +23,7 @@ This application follows the [12-Factor App](https://12factor.net/) methodology:
 1. **Codebase** - Single codebase tracked in Git
 2. **Dependencies** - Explicitly declared in `pom.xml`
 3. **Config** - All configuration via environment variables (no secrets in code)
-4. **Backing Services** - Kafka & MongoDB treated as attached resources
+4. **Backing Services** - Kafka & PostgreSQL treated as attached resources
 5. **Build, Release, Run** - Separate stages with Docker support
 6. **Processes** - Stateless, share-nothing architecture
 7. **Port Binding** - Self-contained HTTP service via embedded Tomcat
@@ -37,7 +37,7 @@ This application follows the [12-Factor App](https://12factor.net/) methodology:
 
 ### Backend (Spring Boot)
 - ✅ Kafka producer/consumer with Spring Kafka
-- ✅ MongoDB persistence with Spring Data
+- ✅ PostgreSQL persistence with Spring Data JPA
 - ✅ RESTful API endpoints
 - ✅ Health checks via Spring Actuator
 - ✅ CORS support for Angular frontend
@@ -59,7 +59,7 @@ This application follows the [12-Factor App](https://12factor.net/) methodology:
 
 - Java 21
 - Docker & Docker Compose (for Kafka)
-- MongoDB Atlas account (or local MongoDB)
+- PostgreSQL (the bundled Docker Compose file starts one)
 - Maven (included via wrapper)
 - *Optional:* Angular CLI for frontend migration
 
@@ -74,9 +74,10 @@ cp .env.example .env.dev
 
 Edit `.env.dev` with your actual credentials:
 ```bash
-# MongoDB Atlas
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/
-MONGODB_DATABASE=kafka_demo
+# PostgreSQL (these are the defaults for the Docker Compose database)
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/postgres
+SPRING_DATASOURCE_USERNAME=postgres
+SPRING_DATASOURCE_PASSWORD=postgres
 
 # Kafka (local or cloud)
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
@@ -259,8 +260,12 @@ Angular will run on `http://localhost:4200` with full API access (CORS already c
 |----------|---------|-------------|
 | `APP_NAME` | demo | Application name |
 | `PORT` | 8080 | Server port (12-Factor: Port binding) |
-| `MONGODB_URI` | - | MongoDB connection string |
-| `MONGODB_DATABASE` | kafka_demo | MongoDB database name |
+| `SPRING_DATASOURCE_URL` | jdbc:postgresql://localhost:5432/postgres | PostgreSQL JDBC URL |
+| `SPRING_DATASOURCE_USERNAME` | postgres | Database user |
+| `SPRING_DATASOURCE_PASSWORD` | postgres | Database password |
+| `DB_POOL_SIZE` | 2 | Maximum database connections |
+| `JPA_DDL_AUTO` | update | `update` creates the `kafka_demo_messages` table; use `validate` when you create it yourself |
+| `DEMO_API_TOKEN` | - | Optional shared secret for `/api/**` (see Deploying to Railway) |
 | `KAFKA_BOOTSTRAP_SERVERS` | localhost:9092 | Kafka broker addresses |
 | `KAFKA_CONSUMER_GROUP_ID` | demo-group | Consumer group ID |
 | `KAFKA_TOPIC_NAME` | demo-topic | Kafka topic name |
@@ -271,7 +276,7 @@ Angular will run on `http://localhost:4200` with full API access (CORS already c
 ## 🚂 Deploying to Railway
 
 Three pieces: this app and a Kafka broker as two services in one Railway project, plus
-a MongoDB database (Atlas free tier works).
+a PostgreSQL database (a Supabase free project works).
 
 ### 1. Broker service
 
@@ -314,13 +319,31 @@ it and set:
 | `KAFKA_BOOTSTRAP_SERVERS` | `kafka.railway.internal:9092` |
 | `KAFKA_TOPIC_NAME` | `demo-topic` |
 | `KAFKA_CONSUMER_GROUP_ID` | `demo-group` |
-| `MONGODB_URI` | the Atlas connection string |
-| `MONGODB_DATABASE` | `kafka_demo` |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://<host>:5432/postgres?sslmode=require` |
+| `SPRING_DATASOURCE_USERNAME` | the database user |
+| `SPRING_DATASOURCE_PASSWORD` | the database password |
+| `DB_POOL_SIZE` | `2` |
+| `JPA_DDL_AUTO` | `validate` (see the table below) |
 | `DEMO_API_TOKEN` | `openssl rand -hex 32` |
 | `CORS_ALLOWED_ORIGINS` | the site that calls the API, if a browser calls it directly |
 
-In Atlas, allow access from anywhere (`0.0.0.0/0`) under Network Access: Railway has no
-fixed outbound address on the Hobby plan.
+**Supabase:** use the **Session pooler** host and username from Connect (the direct
+host is IPv6-only on the free plan). Supabase also serves every table in the `public`
+schema over its REST API, so do not let Hibernate create the table there. Create it
+yourself with row level security on and no policies, which keeps it reachable only
+through this app's database login:
+
+```sql
+create table public.kafka_demo_messages (
+  id          varchar(36)  primary key,
+  content     text         not null,
+  message_key varchar(512),
+  created_at  timestamp(6) not null,
+  topic       varchar(255)
+);
+create index kafka_demo_messages_created_at_idx on public.kafka_demo_messages (created_at);
+alter table public.kafka_demo_messages enable row level security;
+```
 
 ### 3. The API token
 
@@ -366,10 +389,10 @@ spec:
         ports:
         - containerPort: 8080
         env:
-        - name: MONGODB_URI
+        - name: SPRING_DATASOURCE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: mongo-secret
+              name: postgres-secret
               key: uri
         - name: KAFKA_BOOTSTRAP_SERVERS
           value: "kafka-service:9092"
@@ -386,8 +409,8 @@ curl http://localhost:8080/actuator/health
 # Kafka health
 curl http://localhost:8080/actuator/health/kafka
 
-# MongoDB health
-curl http://localhost:8080/actuator/health/mongo
+# Database health
+curl http://localhost:8080/actuator/health/db
 
 # Metrics
 curl http://localhost:8080/actuator/metrics
@@ -397,7 +420,7 @@ curl http://localhost:8080/actuator/metrics
 
 1. **Never commit `.env` files** - Already in `.gitignore`
 2. **Use secrets management** - Vault, AWS Secrets Manager, etc.
-3. **Rotate credentials regularly** - MongoDB and Kafka passwords
+3. **Rotate credentials regularly** - database and Kafka passwords
 4. **Use HTTPS in production** - Configure SSL/TLS
 5. **Restrict CORS origins** - Set specific domains in production
 6. **Enable authentication** - Add Spring Security if needed
@@ -413,9 +436,9 @@ src/main/java/com/example/demo/
 ├── controller/
 │   └── KafkaController.java         # REST API endpoints
 ├── model/
-│   └── Message.java                 # MongoDB document
+│   └── Message.java                 # JPA entity      
 ├── repository/
-│   └── MessageRepository.java       # MongoDB repository
+│   └── MessageRepository.java       # JPA repository    
 └── service/
     ├── KafkaProducerService.java    # Message producer
     └── KafkaConsumerService.java    # Message consumer
@@ -448,10 +471,10 @@ curl -X POST http://localhost:8080/api/kafka/produce \
 - Check logs: `docker-compose logs kafka`
 - Verify `KAFKA_BOOTSTRAP_SERVERS` in `.env.dev`
 
-**MongoDB Connection Error:**
-- Verify `MONGODB_URI` in `.env.dev`
-- Check network connectivity to MongoDB Atlas
-- Ensure IP whitelist in MongoDB Atlas includes your IP
+**Database Connection Error:**
+- Verify `SPRING_DATASOURCE_*` in `.env.dev`
+- Check the database is running (`docker compose ps`)
+- With `JPA_DDL_AUTO=validate`, make sure the `kafka_demo_messages` table exists
 
 **CORS Issues with Angular:**
 - Verify `CORS_ALLOWED_ORIGINS` includes `http://localhost:4200`
@@ -484,10 +507,10 @@ Detailed documentation is available in the [`docs/`](docs/) directory:
 ### Backend
 - **Spring Boot 4.0.2** - Application framework
 - **Spring Kafka** - Kafka integration
-- **Spring Data MongoDB** - MongoDB persistence
+- **Spring Data JPA** - PostgreSQL persistence
 - **Spring Actuator** - Health checks and monitoring
 - **Apache Kafka** - Message streaming
-- **MongoDB Atlas** - Cloud database
+- **PostgreSQL** - Database
 - **Docker** - Containerization
 - **Maven** - Build tool
 
@@ -508,7 +531,7 @@ This project is open source and available under the MIT License.
 - [12-Factor App Methodology](https://12factor.net/)
 - [Spring Boot Documentation](https://spring.io/projects/spring-boot)
 - [Apache Kafka Documentation](https://kafka.apache.org/documentation/)
-- [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+- [PostgreSQL](https://www.postgresql.org/)
 - [Angular Documentation](https://angular.io/docs)
 - [Docker Documentation](https://docs.docker.com/)
 

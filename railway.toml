@@ -3,7 +3,7 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Health includes MongoDB, so a deploy with a bad MONGODB_URI fails here instead of going live.
+# Health includes the database, so a deploy with bad datasource settings fails here instead of going live.
 healthcheckPath    = "/actuator/health"
 healthcheckTimeout = 120
 
