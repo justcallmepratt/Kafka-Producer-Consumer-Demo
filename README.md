@@ -264,6 +264,7 @@ Angular will run on `http://localhost:4200` with full API access (CORS already c
 | `SPRING_DATASOURCE_USERNAME` | postgres | Database user |
 | `SPRING_DATASOURCE_PASSWORD` | postgres | Database password |
 | `DB_POOL_SIZE` | 2 | Maximum database connections |
+| `DB_SCHEMA` | public | Schema that holds the table |
 | `JPA_DDL_AUTO` | update | `update` creates the `kafka_demo_messages` table; use `validate` when you create it yourself |
 | `DEMO_API_TOKEN` | - | Optional shared secret for `/api/**` (see Deploying to Railway) |
 | `KAFKA_BOOTSTRAP_SERVERS` | localhost:9092 | Kafka broker addresses |
@@ -324,25 +325,26 @@ it and set:
 | `SPRING_DATASOURCE_PASSWORD` | the database password |
 | `DB_POOL_SIZE` | `2` |
 | `JPA_DDL_AUTO` | `validate` (see the table below) |
+| `DB_SCHEMA` | `kafka_demo` |
 | `DEMO_API_TOKEN` | `openssl rand -hex 32` |
 | `CORS_ALLOWED_ORIGINS` | the site that calls the API, if a browser calls it directly |
 
 **Supabase:** use the **Session pooler** host and username from Connect (the direct
-host is IPv6-only on the free plan). Supabase also serves every table in the `public`
-schema over its REST API, so do not let Hibernate create the table there. Create it
-yourself with row level security on and no policies, which keeps it reachable only
-through this app's database login:
+host is IPv6-only on the free plan). Supabase serves every table in the `public` schema
+over its REST API, so keep this table out of it: create it yourself in a schema of its
+own and point the app there with `DB_SCHEMA`.
 
 ```sql
-create table public.kafka_demo_messages (
+create schema if not exists kafka_demo;
+create table kafka_demo.kafka_demo_messages (
   id          varchar(36)  primary key,
   content     text         not null,
   message_key varchar(512),
   created_at  timestamp(6) not null,
   topic       varchar(255)
 );
-create index kafka_demo_messages_created_at_idx on public.kafka_demo_messages (created_at);
-alter table public.kafka_demo_messages enable row level security;
+create index kafka_demo_messages_created_at_idx on kafka_demo.kafka_demo_messages (created_at);
+alter table kafka_demo.kafka_demo_messages enable row level security;
 ```
 
 ### 3. The API token
