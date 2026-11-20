@@ -1,0 +1,15 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Health includes MongoDB, so a deploy with a bad MONGODB_URI fails here instead of going live.
+healthcheckPath    = "/actuator/health"
+healthcheckTimeout = 120
+
+restartPolicyType       = "ON_FAILURE"
+restartPolicyMaxRetries = 3
+
+# Railway bills for memory used. Cap the heap explicitly: the container limit is far
+# larger than this app needs, so a percentage-based heap would grow well past it.
+startCommand = "java -Xms128m -Xmx256m -XX:MaxMetaspaceSize=128m -Xss512k -jar app.jar"

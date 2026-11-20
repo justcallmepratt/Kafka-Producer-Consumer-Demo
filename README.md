@@ -268,6 +268,72 @@ Angular will run on `http://localhost:4200` with full API access (CORS already c
 | `LOG_LEVEL` | INFO | Application log level |
 | `SPRING_PROFILES_ACTIVE` | - | Active Spring profile (dev/prod) |
 
+## 🚂 Deploying to Railway
+
+Three pieces: this app and a Kafka broker as two services in one Railway project, plus
+a MongoDB database (Atlas free tier works).
+
+### 1. Broker service
+
+New service → Docker image `apache/kafka:3.9.1` (single node, KRaft, no ZooKeeper).
+Name the service `kafka`: the name becomes its private hostname. Do **not** give it a
+public domain; only the app talks to it, over Railway's private network.
+
+Attach a volume mounted at `/var/lib/kafka/data` and set these variables:
+
+| Variable | Value |
+|---|---|
+| `KAFKA_NODE_ID` | `1` |
+| `KAFKA_PROCESS_ROLES` | `broker,controller` |
+| `KAFKA_LISTENERS` | `PLAINTEXT://:9092,CONTROLLER://:9093` |
+| `KAFKA_ADVERTISED_LISTENERS` | `PLAINTEXT://kafka.railway.internal:9092` |
+| `KAFKA_LISTENER_SECURITY_PROTOCOL_MAP` | `PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT` |
+| `KAFKA_CONTROLLER_LISTENER_NAMES` | `CONTROLLER` |
+| `KAFKA_CONTROLLER_QUORUM_VOTERS` | `1@localhost:9093` |
+| `KAFKA_INTER_BROKER_LISTENER_NAME` | `PLAINTEXT` |
+| `KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR` | `1` |
+| `KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR` | `1` |
+| `KAFKA_TRANSACTION_STATE_LOG_MIN_ISR` | `1` |
+| `KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS` | `0` |
+| `KAFKA_LOG_DIRS` | `/var/lib/kafka/data` |
+| `KAFKA_LOG_RETENTION_HOURS` | `24` |
+| `KAFKA_LOG_RETENTION_BYTES` | `104857600` |
+| `KAFKA_HEAP_OPTS` | `-Xms256m -Xmx256m` |
+| `CLUSTER_ID` | any fixed 22-character base64 id, e.g. from `kafka-storage.sh random-uuid` |
+| `RAILWAY_RUN_UID` | `0` (Railway volumes are mounted as root; the image runs as a non-root user) |
+
+### 2. App service
+
+New service from this repository. [`railway.toml`](railway.toml) supplies the Dockerfile
+build, the `/actuator/health` check and a capped JVM heap. Generate a public domain for
+it and set:
+
+| Variable | Value |
+|---|---|
+| `SPRING_PROFILES_ACTIVE` | `prod` |
+| `KAFKA_BOOTSTRAP_SERVERS` | `kafka.railway.internal:9092` |
+| `KAFKA_TOPIC_NAME` | `demo-topic` |
+| `KAFKA_CONSUMER_GROUP_ID` | `demo-group` |
+| `MONGODB_URI` | the Atlas connection string |
+| `MONGODB_DATABASE` | `kafka_demo` |
+| `DEMO_API_TOKEN` | `openssl rand -hex 32` |
+| `CORS_ALLOWED_ORIGINS` | the site that calls the API, if a browser calls it directly |
+
+In Atlas, allow access from anywhere (`0.0.0.0/0`) under Network Access: Railway has no
+fixed outbound address on the Hobby plan.
+
+### 3. The API token
+
+With `DEMO_API_TOKEN` set, every `/api/**` request must send the same value in an
+`X-Demo-Token` header or it gets a 401. That is what stops strangers from producing
+records or calling `DELETE /api/kafka/consume` on a public URL. It is meant for a trusted
+server calling the API; the bundled HTML UI cannot send the header, so it only works
+where the token is unset (local development).
+
+```bash
+curl -H "X-Demo-Token: $DEMO_API_TOKEN" https://<app-domain>/api/kafka/messages
+```
+
 ## 🏭 Production Deployment
 
 ### Cloud-Native Deployment (12-Factor)
