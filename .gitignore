@@ -45,3 +45,6 @@ build/
 ### OS ###
 .DS_Store
 Thumbs.db
+
+### Node (not part of the build) ###
+node_modules/
