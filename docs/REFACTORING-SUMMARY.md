@@ -1,5 +1,7 @@
 # Project Refactoring Summary
 
+> **Note:** written when the app stored messages in MongoDB. It now uses PostgreSQL through Spring Data JPA (`SPRING_DATASOURCE_*` instead of `MONGODB_URI`); see the main README.
+
 ## 🎯 Objective
 Refactor the monolithic Spring Boot application into a **Maven multi-module architecture** for better separation of concerns, maintainability, and scalability.
 

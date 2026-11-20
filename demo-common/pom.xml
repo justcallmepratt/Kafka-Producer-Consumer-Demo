@@ -18,10 +18,10 @@
     <description>Common module - Domain models and repositories</description>
     
     <dependencies>
-        <!-- MongoDB for domain models -->
+        <!-- JPA for domain models -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         
         <!-- For @Data, @Getter, @Setter annotations (optional) -->

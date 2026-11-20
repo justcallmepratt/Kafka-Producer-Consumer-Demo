@@ -2,21 +2,40 @@ package com.example.demo.common.model;
 
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.Table;
 
 /**
- * MongoDB document representing a Kafka message.
+ * A consumed Kafka message, stored in PostgreSQL.
+ *
+ * The JSON shape ({id, content, key, timestamp, topic}) is the API contract;
+ * the column names differ where the property name is awkward in SQL.
  */
-@Document(collection = "messages")
+@Entity
+@Table(name = "kafka_demo_messages",
+        indexes = @Index(name = "kafka_demo_messages_created_at_idx", columnList = "created_at"))
 public class Message {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(length = 36)
     private String id;
-    
+
+    @Column(nullable = false, columnDefinition = "text")
     private String content;
+
+    @Column(name = "message_key", length = 512)
     private String key;
+
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime timestamp;
+
+    @Column(length = 255)
     private String topic;
 
     public Message() {

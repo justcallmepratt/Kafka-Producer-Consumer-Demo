@@ -17,7 +17,7 @@ import com.example.demo.common.repository.MessageRepository;
 
 /**
  * Service for consuming messages from Kafka topics.
- * Messages are persisted to MongoDB for permanent storage.
+ * Messages are persisted to the database for permanent storage.
  */
 @Service
 public class KafkaConsumerService {
@@ -35,7 +35,7 @@ public class KafkaConsumerService {
 
     /**
      * Listens to the configured Kafka topic and processes incoming messages.
-     * Saves each message to MongoDB with metadata.
+     * Saves each message to the database with metadata.
      *
      * @param messageContent The consumed message content
      * @param key The message key (if present)
@@ -45,15 +45,15 @@ public class KafkaConsumerService {
                        @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String key) {
         logger.info("Consumed message: {} with key: {}", messageContent, key);
         
-        // Create and save message to MongoDB
+        // Create and save message to the database
         Message message = new Message(messageContent, key, topicName);
         messageRepository.save(message);
         
-        logger.info("Message saved to MongoDB: {}", message);
+        logger.info("Message saved to the database: {}", message);
     }
 
     /**
-     * Returns all consumed messages from MongoDB.
+     * Returns all consumed messages from the database.
      *
      * @return List of message contents
      */
@@ -65,7 +65,7 @@ public class KafkaConsumerService {
     }
 
     /**
-     * Returns all message entities from MongoDB.
+     * Returns all message entities from the database.
      *
      * @return List of Message entities
      */
@@ -74,10 +74,10 @@ public class KafkaConsumerService {
     }
 
     /**
-     * Clears all consumed messages from MongoDB.
+     * Clears all consumed messages from the database.
      */
     public void clearMessages() {
         messageRepository.deleteAll();
-        logger.info("Cleared all messages from MongoDB");
+        logger.info("Cleared all messages from the database");
     }
 }
