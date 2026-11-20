@@ -2,6 +2,11 @@
 
 A **12-Factor compliant**, **modular** Spring Boot application demonstrating Kafka producer and consumer functionality with PostgreSQL persistence and a modern micro frontend UI.
 
+**Live demo:** [justcallmepratt.dev/projects/kafka](https://justcallmepratt.dev/projects/kafka) — send a record and watch it go through a real broker. How that deployment is put together: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
+[![CI](https://github.com/justcallmepratt/Kafka-Producer-Consumer-Demo/actions/workflows/ci.yml/badge.svg)](https://github.com/justcallmepratt/Kafka-Producer-Consumer-Demo/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/justcallmepratt/Kafka-Producer-Consumer-Demo/actions/workflows/codeql.yml/badge.svg)](https://github.com/justcallmepratt/Kafka-Producer-Consumer-Demo/actions/workflows/codeql.yml)
+
 ## 🏗️ Architecture
 
 This application uses a **Maven multi-module architecture** for clean separation of concerns:
@@ -498,6 +503,8 @@ Detailed documentation is available in the [`docs/`](docs/) directory:
 - **[Micro Frontend](docs/MICRO-FRONTEND.md)** - Frontend architecture guide
 - **[Angular Migration](docs/ANGULAR_MIGRATION.md)** - Angular setup and migration
 - **[Refactoring Summary](docs/REFACTORING-SUMMARY.md)** - Detailed refactoring changelog
+- **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - Production architecture and edge cases
+- **[SECURITY.md](SECURITY.md)** - Exposure rules, secrets and vulnerability reporting
 
 ## 📚 Technologies Used
 
@@ -547,100 +554,3 @@ For issues and questions:
 ---
 
 Built with ❤️ following 12-Factor App principles
-
-- Clear all messages with one click
-- Auto-refresh functionality
-
-## API Endpoints
-
-### Produce Message
-```
-POST /api/kafka/produce
-Content-Type: application/json
-
-{
-  "message": "Your message here",
-  "key": "optional-key"
-}
-```
-
-### Get Consumed Messages
-```
-GET /api/kafka/consume
-```
-
-### Clear Messages
-```
-DELETE /api/kafka/consume
-```
-
-## Configuration
-
-Edit `src/main/resources/application.properties` to customize:
-
-```properties
-# Kafka broker address
-spring.kafka.bootstrap-servers=localhost:9092
-
-# Consumer group ID
-spring.kafka.consumer.group-id=demo-group
-
-# Topic name
-kafka.topic.name=demo-topic
-```
-
-## Project Structure
-
-```
-src/main/java/com/example/demo/
-├── DemoApplication.java              # Main application class
-├── config/
-│   └── KafkaTopicConfig.java        # Kafka topic configuration
-├── controller/
-│   └── KafkaController.java         # REST API endpoints
-└── service/
-    ├── KafkaProducerService.java    # Message producer logic
-    └── KafkaConsumerService.java    # Message consumer logic
-
-src/main/resources/
-├── application.properties            # Application configuration
-└── static/
-    └── index.html                    # Web UI
-```
-
-## Testing the Application
-
-1. Start Kafka (using Docker or local installation)
-2. Run the Spring Boot application
-3. Open http://localhost:8080 in your browser
-4. Type a message and click "Send Message"
-5. Watch the message appear in the Consumer panel on the right
-6. Try sending multiple messages to see them accumulate
-7. Use message keys to test partitioning
-
-## Tips
-
-- Use Ctrl+Enter in the message textarea to quickly send messages
-- The consumer auto-refreshes every 2 seconds
-- Messages are limited to the last 100 to prevent memory issues
-- Check the application logs for detailed Kafka events
-
-## Troubleshooting
-
-**Kafka Connection Error:**
-- Ensure Kafka is running on `localhost:9092`
-- Check if Zookeeper is running
-- Verify firewall settings
-
-**Messages not appearing:**
-- Check browser console for errors
-- Verify the topic name in configuration
-- Check application logs for consumer errors
-
-## Technologies Used
-
-- Spring Boot 4.0.2
-- Spring Kafka
-- Apache Kafka
-- HTML/CSS/JavaScript
-- Maven
