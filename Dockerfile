@@ -1,6 +1,6 @@
 # Multi-stage Dockerfile for modular Spring Boot application
 # Build stage (12-Factor: Separate build/run stages)
-FROM maven:3.9-eclipse-temurin-21 AS build
+FROM maven:3.9-eclipse-temurin-26 AS build
 WORKDIR /app
 
 # Copy parent POM and module POMs
