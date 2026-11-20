@@ -23,7 +23,7 @@ COPY demo-app/src demo-app/src
 RUN mvn clean package -DskipTests
 
 # Run stage (12-Factor: Stateless processes)
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:26-jre-alpine
 WORKDIR /app
 
 # Create non-root user for security
