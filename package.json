@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "maven": "^5.0.0",
-    "mongodb": "^7.1.0",
-    "spring": "^0.0.0"
-  }
-}

@@ -8,6 +8,10 @@ Complete documentation for the Kafka Messaging Platform.
 - **[Main README](../README.md)** - Quick start and API reference
 - **[DOCUMENTATION-INDEX.md](DOCUMENTATION-INDEX.md)** - Complete documentation index
 
+### Operations
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - Production architecture, releasing and edge cases
+- **[SECURITY.md](../SECURITY.md)** - Exposure rules, secrets and vulnerability reporting
+
 ### Architecture & Design
 - **[MODULAR-ARCHITECTURE.md](MODULAR-ARCHITECTURE.md)** - Multi-module Maven structure (400+ lines)
 - **[REFACTORING-SUMMARY.md](REFACTORING-SUMMARY.md)** - Refactoring changelog (400+ lines)
